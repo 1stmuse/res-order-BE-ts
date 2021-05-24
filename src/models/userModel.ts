@@ -1,18 +1,21 @@
 import mongoose , { Schema, Document } from 'mongoose'
 import * as bcrypt from 'bcrypt'
-import { timeStamp } from 'console'
 
 export interface UserType extends Document {
-    username: string,
-    password: string
+    fullname: string,
+    password: string,
+    email: string,
+    phone_number: string
 }
 
 const UserSchema: Schema = new Schema({
-    username: { type: String, required: true, unique:true },
-    password: { type: String, required: true }
+    fullname: { type: String, required: true, },
+    password: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    phone_number: {type: String, required: true }
 }, {timestamps:true})
 
-UserSchema.pre('save', function(this:UserType, next:any){
+UserSchema.pre<UserType>('save', function(this:UserType, next: any){
     var user = this
     if(user.isModified('password')){
         bcrypt.genSalt(10, function(err, salt){

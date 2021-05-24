@@ -9,5 +9,5 @@ DB()
 routes(app)
 
 app.listen(8080, ()=>{
-    console.log('server running')
+    console.log(`server running`)
 })
