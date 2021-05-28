@@ -13,31 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const userModel_1 = __importDefault(require("../models/userModel"));
 const errorCreator_1 = require("../helpers/errorCreator");
-class UserServices {
-    static create(data) {
+const orderModel_1 = __importDefault(require("../models/orderModel"));
+class OrderServices {
+    static create(order) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user;
-            const userExist = yield userModel_1.default.findOne({ email: data.email });
-            if (userExist)
-                throw errorCreator_1.createError(400, "user already exist");
-            user = new userModel_1.default(data);
-            const newUser = yield user.save();
-            if (!newUser)
-                throw errorCreator_1.createError(500, "server error");
-            return newUser;
+            let savedOrder;
+            if (!mongoose_1.isValidObjectId(order === null || order === void 0 ? void 0 : order.userId))
+                throw errorCreator_1.createError(400, "Invalid user Id");
+            savedOrder = new orderModel_1.default(order);
+            const data = yield savedOrder.save();
+            if (!data)
+                throw errorCreator_1.createError(500, "couls not create order");
+            return data;
         });
     }
     static getOne(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            let order;
             if (!mongoose_1.isValidObjectId(id))
-                throw errorCreator_1.createError(400, "Invalid user Id");
-            const userFound = yield userModel_1.default.findById(id);
-            if (!userFound)
-                throw errorCreator_1.createError(404, "User with that id does not Exist");
-            return userFound;
+                throw errorCreator_1.createError(400, "Invalid order Id");
+            order = yield orderModel_1.default.findById(id);
+            if (!order)
+                throw errorCreator_1.createError(404, "other not found");
+            return order;
         });
     }
 }
-exports.default = UserServices;
+exports.default = OrderServices;

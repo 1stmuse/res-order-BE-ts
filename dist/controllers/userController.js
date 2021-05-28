@@ -18,32 +18,37 @@ const UserService_1 = __importDefault(require("../services/UserService"));
 const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = Object.assign({}, req.body);
     try {
-        const user = yield UserService_1.default.createUser(userData);
+        const user = yield UserService_1.default.create(userData);
         user.toObject();
-        const savedUser = {
+        const response = {
+            id: user._id,
             fullname: user.fullname,
             email: user.email,
-            phone_number: user.phone_number
-        };
-        const response = {
-            user: savedUser
+            phone_number: user.phone_number,
+            orders: user.orders
         };
         return utils_1.handleResponse(res, 200, 'user  created successfully', response);
     }
     catch (error) {
-        return utils_1.handleResponse(res, 500, error.message);
+        return utils_1.handleResponse(res, error.status, error.message);
     }
 });
 exports.createUser = createUser;
 const getUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const users = yield UserService_1.default.getUserById(id);
-        return utils_1.handleResponse(res, 200, 'success', users);
+        const user = yield UserService_1.default.getOne(id);
+        const response = {
+            id: user._id,
+            fullname: user.fullname,
+            email: user.email,
+            phone_number: user.phone_number,
+            orders: user.orders
+        };
+        return utils_1.handleResponse(res, 200, 'success', response);
     }
     catch (error) {
-        // console.log(error)
-        return utils_1.handleResponse(res, 400, error.message);
+        return utils_1.handleResponse(res, error.status, error.message);
     }
 });
 exports.getUser = getUser;

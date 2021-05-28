@@ -20,32 +20,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const bcrypt = __importStar(require("bcrypt"));
-const UserSchema = new mongoose_1.Schema({
-    fullname: { type: String, required: true, },
-    password: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone_number: { type: String, required: true },
-    orders: [{
-            type: mongoose_1.Schema.Types.ObjectId, ref: "order"
-        }]
+const orderSchema = new mongoose_1.Schema({
+    userId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "user" },
+    items: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'product' }],
+    total_price: { type: Number, required: true },
+    billing_address: { type: String }
 }, { timestamps: true });
-UserSchema.pre('save', function (next) {
-    var user = this;
-    if (user.isModified('password')) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err)
-                return next(err);
-            bcrypt.hash(user.password, salt, function (err, hash) {
-                if (err)
-                    return next(err);
-                user.password = hash;
-                next();
-            });
-        });
-    }
-    else {
-        next();
-    }
-});
-exports.default = mongoose_1.default.model('user', UserSchema);
+exports.default = mongoose_1.default.model('order', orderSchema);

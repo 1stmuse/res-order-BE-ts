@@ -13,31 +13,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const userModel_1 = __importDefault(require("../models/userModel"));
 const errorCreator_1 = require("../helpers/errorCreator");
-class UserServices {
+const categoryModel_1 = __importDefault(require("../models/categoryModel"));
+class CategoryServices {
     static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user;
-            const userExist = yield userModel_1.default.findOne({ email: data.email });
-            if (userExist)
-                throw errorCreator_1.createError(400, "user already exist");
-            user = new userModel_1.default(data);
-            const newUser = yield user.save();
-            if (!newUser)
-                throw errorCreator_1.createError(500, "server error");
-            return newUser;
+            let cat;
+            const isExist = yield categoryModel_1.default.findOne({ name: data.name });
+            if (isExist)
+                throw errorCreator_1.createError(400, "category already exist");
+            cat = new categoryModel_1.default(data);
+            yield cat.save();
+            if (!cat)
+                throw errorCreator_1.createError(500, "could not create categroy");
+            return cat;
         });
     }
     static getOne(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mongoose_1.isValidObjectId(id))
-                throw errorCreator_1.createError(400, "Invalid user Id");
-            const userFound = yield userModel_1.default.findById(id);
-            if (!userFound)
-                throw errorCreator_1.createError(404, "User with that id does not Exist");
-            return userFound;
+            if (mongoose_1.isValidObjectId(id))
+                throw errorCreator_1.createError(400, "invalid category id");
+            let cat;
+            cat = yield categoryModel_1.default.findById(id);
+            if (!cat)
+                throw errorCreator_1.createError(404, "category not found");
+            return cat;
         });
     }
 }
-exports.default = UserServices;
+exports.default = CategoryServices;
