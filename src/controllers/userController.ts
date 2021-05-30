@@ -1,5 +1,6 @@
 import {Response, Request, NextFunction} from 'express'
 import {handleResponse} from '../helpers/utils'
+import { UserType } from '../models/userModel'
 import UserService from "../services/UserService"
 
 export const createUser = async (req:Request, res:Response, next:NextFunction)=>{
@@ -8,14 +9,13 @@ export const createUser = async (req:Request, res:Response, next:NextFunction)=>
     }
     
     try {
-        const user = await UserService.create(userData)
+        const user: UserType = await UserService.create(userData)
         user.toObject()
         const response = {
             id: user._id,
             fullname: user.fullname,
             email: user.email,
             phone_number: user.phone_number,
-            orders: user.orders
         }
     
         return handleResponse(res, 200, 'user  created successfully', response)
@@ -28,13 +28,12 @@ export const createUser = async (req:Request, res:Response, next:NextFunction)=>
 export const getUser = async (req:Request, res:Response, next:NextFunction) =>{
     try {
         const id = req.params.id
-        const user = await UserService.getOne(id)
+        const user: UserType = await UserService.getOne(id)
         const response = {
             id: user._id,
             fullname: user.fullname,
             email: user.email,
             phone_number: user.phone_number,
-            orders: user.orders
         }
 
         return handleResponse(res, 200, 'success', response)

@@ -20,9 +20,12 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const order = yield orderServices_1.default.create(data);
         const response = {
+            id: order._id,
             total_price: order.total_price,
+            user: order.user,
             items: order.items,
-            billing_address: order.billing_address
+            billing_address: order.billing_address,
+            dateOrdered: order.dateOrdered
         };
         utils_1.handleResponse(res, 200, "order created", response);
     }
@@ -36,9 +39,12 @@ const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = yield orderServices_1.default.getOne(id);
         const response = {
+            user: order.user,
+            id: order._id,
             total_price: order.total_price,
             items: order.items,
-            billing_address: order.billing_address
+            billing_address: order.billing_address,
+            dateOrdered: order.dateOrdered
         };
         utils_1.handleResponse(res, 200, "success", response);
     }

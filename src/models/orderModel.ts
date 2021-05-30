@@ -2,17 +2,23 @@ import mongoose, {Schema, Document, ObjectId } from 'mongoose'
 import { productType } from './productModel'
 
 export interface orderTypes extends Document {
-    userId: ObjectId,
+    user: ObjectId,
     total_price: number,
-    items: productType[]
-    billing_address: string
+    items: any []
+    billing_address: string,
+    dateOrdered: string
+    status: string
 }
 
+
+
 const orderSchema: Schema = new Schema({
-    userId: { type: Schema.Types.ObjectId, required: true, ref: "user" },
-    items:[{type: Schema.Types.ObjectId, ref: 'product'}],
-    total_price: { type: Number, required:true},
-    billing_address: {type: String}
+    user: { type: Schema.Types.ObjectId, required: true, ref: "user" },
+    items:[],
+    total_price: { type: Number, default:0,},
+    billing_address: {type: String},
+    dateOrdered: { type: Date, default: Date.now},
+    status: {type: String, default: "pending"}
 }, {timestamps: true})
 
 export default mongoose.model<orderTypes>('order', orderSchema)

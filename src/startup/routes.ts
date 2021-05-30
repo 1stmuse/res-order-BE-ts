@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import userRoute from '../routes/userRoute'
 import orderRoute from "../routes/orderRoutes"
 import categoryRoute from "../routes/categoryRoutes"
+import productRoute from "../routes/productRoute"
 
 export default function(app:Application){
     app.use(express.json())
@@ -13,4 +14,5 @@ export default function(app:Application){
     app.use('/api/v1/users', userRoute)
     app.use('/api/v1/orders', orderRoute)
     app.use("/api/v1/categories", categoryRoute)
+    app.use("/api/v1/products", productRoute)
 }

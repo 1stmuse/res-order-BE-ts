@@ -31,7 +31,7 @@ class CategoryServices {
     }
     static getOne(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (mongoose_1.isValidObjectId(id))
+            if (!mongoose_1.isValidObjectId(id))
                 throw errorCreator_1.createError(400, "invalid category id");
             let cat;
             cat = yield categoryModel_1.default.findById(id);

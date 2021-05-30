@@ -14,34 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const errorCreator_1 = require("../helpers/errorCreator");
-const orderModel_1 = __importDefault(require("../models/orderModel"));
-class OrderServices {
-    static create(order) {
+const productModel_1 = __importDefault(require("../models/productModel"));
+class ProductServices {
+    static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const items = order.items
-            // await items.map(async (or: orderItem) => {
-            //     const orderItem = new orderItemSchema(or)
-            // })
-            let savedOrder;
-            if (!mongoose_1.isValidObjectId(order === null || order === void 0 ? void 0 : order.userId))
-                throw errorCreator_1.createError(400, "Invalid user Id");
-            savedOrder = new orderModel_1.default(order);
-            const data = yield savedOrder.save();
-            if (!data)
-                throw errorCreator_1.createError(500, "couls not create order");
-            return data;
+            let product;
+            product = new productModel_1.default(data);
+            yield product.save();
+            if (!product)
+                throw errorCreator_1.createError(500, "could not create product");
+            return product;
         });
     }
     static getOne(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            let order;
             if (!mongoose_1.isValidObjectId(id))
-                throw errorCreator_1.createError(400, "Invalid order Id");
-            order = yield orderModel_1.default.findById(id).populate("product", "name price description");
-            if (!order)
-                throw errorCreator_1.createError(404, "other not found");
-            return order;
+                throw errorCreator_1.createError(400, "invalid product ID");
+            let product;
+            product = yield productModel_1.default.findById(id).populate("category", "name");
+            if (!product)
+                throw errorCreator_1.createError(500, "could not create product");
+            return product;
+        });
+    }
+    static getAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let products;
+            products = yield productModel_1.default.find().populate("category", "name");
+            if (!products)
+                throw errorCreator_1.createError(500, "could not get product");
+            return products;
         });
     }
 }
-exports.default = OrderServices;
+exports.default = ProductServices;

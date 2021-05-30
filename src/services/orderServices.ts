@@ -19,7 +19,7 @@ export default class OrderServices {
     static async getOne (id:string) {
         let order ;
         if(!isValidObjectId(id)) throw createError(400, "Invalid order Id");
-        order = await Order.findById(id)
+        order = await Order.findById(id).populate("product", "name price description")
         if(!order) throw createError(404, "other not found")
         return order
 

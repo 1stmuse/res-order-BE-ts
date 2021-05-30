@@ -26,6 +26,7 @@ const productSchema = new mongoose_1.Schema({
     available: { type: Boolean, default: true },
     category: { type: mongoose_1.Schema.Types.ObjectId, ref: "category" },
     description: { type: String, required: true },
-    images: [{ type: String }]
+    images: [{ type: String }],
+    createdAt: { type: Date, default: Date.now, required: true }
 });
 exports.default = mongoose_1.default.model("product", productSchema);

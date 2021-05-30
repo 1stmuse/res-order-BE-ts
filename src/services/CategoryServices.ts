@@ -15,7 +15,7 @@ export default class CategoryServices {
     }
 
     static async getOne (id:string){
-        if(isValidObjectId(id)) throw createError(400, "invalid category id")
+        if(!isValidObjectId(id)) throw createError(400, "invalid category id")
         let cat;
         cat = await Category.findById(id)
         if(!cat) throw createError(404, "category not found")
