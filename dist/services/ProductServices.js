@@ -33,7 +33,7 @@ class ProductServices {
             let product;
             product = yield productModel_1.default.findById(id).populate("category", "name");
             if (!product)
-                throw errorCreator_1.createError(500, "could not create product");
+                throw errorCreator_1.createError(404, "could not get product");
             return product;
         });
     }
@@ -42,7 +42,7 @@ class ProductServices {
             let products;
             products = yield productModel_1.default.find().populate("category", "name");
             if (!products)
-                throw errorCreator_1.createError(500, "could not get product");
+                throw errorCreator_1.createError(404, "could not get product");
             return products;
         });
     }

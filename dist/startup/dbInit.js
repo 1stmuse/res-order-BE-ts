@@ -13,7 +13,12 @@ function default_1() {
         useUnifiedTopology: true,
         useFindAndModify: false
     })
-        .then(() => console.log(`Connected to ${db} ... working`));
+        .then(() => {
+        console.log(`Connected to ${db} ... working`);
+        // console.log("seeding started")
+        // seedProduct()
+        // console.log("seeding complteed")
+    });
     mongoose_1.default.Promise = global.Promise;
 }
 exports.default = default_1;

@@ -20,7 +20,7 @@ export const createProduct = async (req:Request, res:Response) => {
         }
         handleResponse(res, 200, "success", response)
     } catch (error) {
-        handleResponse(res, error.error, error.message)
+        handleResponse(res, error.status, error.message)
     }
 }
 
@@ -40,7 +40,7 @@ export const getProduct = async (req:Request, res:Response) => {
         }
         handleResponse(res, 200, "success", response)
     } catch (error) {
-        handleResponse(res, error.error, error.message)
+        handleResponse(res, error.status, error.message)
     }
 }
 
@@ -50,6 +50,6 @@ export const getProducts = async (req:Request, res:Response) => {
         const response = products
         handleResponse(res, 200, "success", response)
     } catch (error) {
-        handleResponse(res, error.error, error.message)
+        handleResponse(res, error.status, error.message)
     }
 }

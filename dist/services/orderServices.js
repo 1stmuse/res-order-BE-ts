@@ -18,29 +18,33 @@ const orderModel_1 = __importDefault(require("../models/orderModel"));
 class OrderServices {
     static create(order) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const items = order.items
-            // await items.map(async (or: orderItem) => {
-            //     const orderItem = new orderItemSchema(or)
-            // })
             let savedOrder;
-            if (!mongoose_1.isValidObjectId(order === null || order === void 0 ? void 0 : order.userId))
+            if (!mongoose_1.isValidObjectId(order === null || order === void 0 ? void 0 : order.user))
                 throw errorCreator_1.createError(400, "Invalid user Id");
             savedOrder = new orderModel_1.default(order);
             const data = yield savedOrder.save();
             if (!data)
-                throw errorCreator_1.createError(500, "couls not create order");
+                throw errorCreator_1.createError(400, "couls not create order");
             return data;
         });
     }
-    static getOne(id) {
+    static getUserOrders(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let order;
             if (!mongoose_1.isValidObjectId(id))
                 throw errorCreator_1.createError(400, "Invalid order Id");
-            order = yield orderModel_1.default.findById(id).populate("product", "name price description");
+            order = yield orderModel_1.default.find({ user: Object(id) }).populate("user", "fullname");
             if (!order)
                 throw errorCreator_1.createError(404, "other not found");
             return order;
+        });
+    }
+    static getAllOrder() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const orders = yield orderModel_1.default.find().populate("user", "fullname");
+            if (!orders)
+                throw errorCreator_1.createError(500, "internal server Error");
+            return orders;
         });
     }
 }

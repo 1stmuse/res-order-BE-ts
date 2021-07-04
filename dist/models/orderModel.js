@@ -19,18 +19,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderItemSchema = void 0;
+exports.orderSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-exports.orderItemSchema = new mongoose_1.Schema({
-    quatity: { type: Number, default: 0 },
-    product: { type: mongoose_1.Schema.Types.ObjectId, ref: "product" }
-});
-// const items = mongoose.model<orderItem>("items", orderItemSchema)
-const orderSchema = new mongoose_1.Schema({
+exports.orderSchema = new mongoose_1.Schema({
     user: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "user" },
-    items: [exports.orderItemSchema],
+    items: [],
     total_price: { type: Number, default: 0, },
     billing_address: { type: String },
-    dateOrdered: { type: Date, default: Date.now }
+    dateOrdered: { type: Date, default: Date.now },
+    status: { type: String, default: "pending" }
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('order', orderSchema);
+exports.default = mongoose_1.default.model('order', exports.orderSchema);

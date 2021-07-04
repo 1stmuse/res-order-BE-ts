@@ -18,19 +18,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const bcrypt = __importStar(require("bcrypt"));
-const UserSchema = new mongoose_1.Schema({
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+exports.UserSchema = new mongoose_1.Schema({
     fullname: { type: String, required: true, },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone_number: { type: String, required: true },
-    orders: [{
-            type: mongoose_1.Schema.Types.ObjectId, ref: "order"
-        }]
+    reset_otp: { type: String, default: "" },
 }, { timestamps: true });
-UserSchema.pre('save', function (next) {
+exports.UserSchema.pre('save', function (next) {
     var user = this;
     if (user.isModified('password')) {
         bcrypt.genSalt(10, function (err, salt) {
@@ -48,4 +53,16 @@ UserSchema.pre('save', function (next) {
         next();
     }
 });
-exports.default = mongoose_1.default.model('user', UserSchema);
+exports.UserSchema.methods.generateToken = function (userId, cb) {
+    jsonwebtoken_1.default.sign({ id: userId }, `${process.env.JWT_SECRET}`, (err, token) => {
+        if (err)
+            cb(null);
+        cb(token);
+    });
+};
+exports.UserSchema.methods.createOtp = function (otp) {
+    var user = this;
+    user.reset_otp = otp;
+    user.save();
+};
+exports.default = mongoose_1.default.model('user', exports.UserSchema);

@@ -24,7 +24,7 @@ const productSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     price: { type: String, required: true },
     available: { type: Boolean, default: true },
-    category: { type: mongoose_1.Schema.Types.ObjectId, ref: "category" },
+    category: { type: String, require: true },
     description: { type: String, required: true },
     images: [{ type: String }],
     createdAt: { type: Date, default: Date.now, required: true }

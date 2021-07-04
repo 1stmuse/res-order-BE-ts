@@ -1,6 +1,7 @@
 import { Application } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import { seedProduct } from "../seedDb/Products"
 
 dotenv.config()
 
@@ -12,7 +13,11 @@ export default function():void {
     useUnifiedTopology:true,
     useFindAndModify:false
     })
-    .then(()=> console.log(`Connected to ${db} ... working`))
-    
+    .then(()=> {
+        console.log(`Connected to ${db} ... working`)
+        // console.log("seeding started")
+        // seedProduct()
+        // console.log("seeding complteed")
+    })
     mongoose.Promise = global.Promise
 }

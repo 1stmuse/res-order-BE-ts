@@ -1,8 +1,17 @@
 import mongoose, {Schema, Document, ObjectId } from 'mongoose'
-import { productType } from './productModel'
+import { UModel } from "./userModel"
 
-export interface orderTypes extends Document {
-    user: ObjectId,
+export interface orderDoc extends Document {
+    user: UModel
+    total_price: number,
+    items: any []
+    billing_address: string,
+    dateOrdered: string
+    status: string
+}
+
+export interface orderTypes {
+    user: string,
     total_price: number,
     items: any []
     billing_address: string,
@@ -12,7 +21,7 @@ export interface orderTypes extends Document {
 
 
 
-const orderSchema: Schema = new Schema({
+export const orderSchema: Schema = new Schema({
     user: { type: Schema.Types.ObjectId, required: true, ref: "user" },
     items:[],
     total_price: { type: Number, default:0,},
@@ -21,4 +30,4 @@ const orderSchema: Schema = new Schema({
     status: {type: String, default: "pending"}
 }, {timestamps: true})
 
-export default mongoose.model<orderTypes>('order', orderSchema)
+export default mongoose.model<orderDoc>('order', orderSchema)

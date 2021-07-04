@@ -1,6 +1,6 @@
 import { isValidObjectId, ObjectId } from "mongoose"
-import { format } from "node:path"
-import User, { UserType } from "../models/userModel"
+import bcrypt from "bcrypt"
+import User, { UModel, UserType } from "../models/userModel"
 import { createError } from "../helpers/errorCreator"
 
 
@@ -16,6 +16,17 @@ export default class UserServices {
 
             return newUser
             
+    }
+
+    static async auth (data: Pick<UserType, "email" | "password">){
+            
+            const user: UModel | null = await User.findOne({email: data.email})
+            if(!user) throw createError(400, "email or password incorrect")
+            const password = bcrypt.compareSync(data.password, user.password)
+            if(!password) throw createError(400, "email or password incorrect")
+
+            return user
+
     }
 
     static async getOne (id: string) {

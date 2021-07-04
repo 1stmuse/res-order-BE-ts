@@ -12,11 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrder = exports.createOrder = void 0;
+exports.getAllOrder = exports.getUserOrders = exports.createOrder = void 0;
 const utils_1 = require("../helpers/utils");
 const orderServices_1 = __importDefault(require("../services/orderServices"));
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = Object.assign({}, req.body);
+    const data = {
+        user: req.body.userId,
+        total_price: req.body.total_price,
+        status: "Pending",
+        dateOrdered: Date.now().toString(),
+        billing_address: req.body.billing_address,
+        items: req.body.items
+    };
     try {
         const order = yield orderServices_1.default.create(data);
         const response = {
@@ -34,22 +41,42 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.createOrder = createOrder;
-const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
+const getUserOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.userId;
     try {
-        const order = yield orderServices_1.default.getOne(id);
-        const response = {
-            user: order.user,
-            id: order._id,
-            total_price: order.total_price,
-            items: order.items,
-            billing_address: order.billing_address,
-            dateOrdered: order.dateOrdered
-        };
+        const order = yield orderServices_1.default.getUserOrders(id);
+        const response = order.map((or) => ({
+            user: or.user.fullname,
+            userId: or.user._id,
+            id: or._id,
+            total_price: or.total_price,
+            items: or.items,
+            billing_address: or.billing_address,
+            dateOrdered: or.dateOrdered
+        }));
         utils_1.handleResponse(res, 200, "success", response);
     }
     catch (error) {
         utils_1.handleResponse(res, error.status, error.message);
     }
 });
-exports.getOrder = getOrder;
+exports.getUserOrders = getUserOrders;
+const getAllOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const orders = yield orderServices_1.default.getAllOrder();
+        const response = orders.map((or) => ({
+            user: or.user.fullname,
+            userId: or.user._id,
+            id: or._id,
+            total_price: or.total_price,
+            items: or.items,
+            billing_address: or.billing_address,
+            dateOrdered: or.dateOrdered
+        }));
+        utils_1.handleResponse(res, 200, "success", response);
+    }
+    catch (error) {
+        utils_1.handleResponse(res, error.status, error.message);
+    }
+});
+exports.getAllOrder = getAllOrder;

@@ -27,28 +27,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendOTP = exports.handleResponse = void 0;
-const dotenv = __importStar(require("dotenv"));
-const twilio_1 = require("twilio");
-dotenv.config();
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const phone = process.env.TWILIO_NUMBER;
-const client = new twilio_1.Twilio(`${accountSid}`, `${authToken}`);
-const handleResponse = (res, statusCode, message, data, token) => {
-    return res.status(statusCode).json({
-        message,
-        data,
-        token
-    });
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-exports.handleResponse = handleResponse;
-const sendOTP = (to, otp) => __awaiter(void 0, void 0, void 0, function* () {
-    return client.messages.create({
-        body: `Your OTP is ${otp}, it expires in 1 minute`,
-        from: `${phone}`,
-        to: to
-    });
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv = __importStar(require("dotenv"));
+const utils_1 = require("../helpers/utils");
+const errorCreator_1 = require("../helpers/errorCreator");
+dotenv.config();
+exports.default = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const bearerHeader = req.headers['authorization'];
+        if (typeof bearerHeader == undefined) {
+            throw errorCreator_1.createError(403, "Unauthorized, provide token");
+        }
+        const bearerToken = bearerHeader.split(' ')[1];
+        const decoded = jsonwebtoken_1.default.verify(bearerToken, `${process.env.JWT_SECRET}`);
+        if (!decoded)
+            throw errorCreator_1.createError(400, "unauthorized, invalid token");
+        // const user = await UserServices.getOne(decoded?.id)
+        // if(!user) throw createError(400, "Invalid token, authentication failed")
+        res.locals.userId = decoded === null || decoded === void 0 ? void 0 : decoded.id;
+        next();
+        // handleResponse(res, 200, "sucees",user, bearerToken)
+    }
+    catch (error) {
+        utils_1.handleResponse(res, (_a = error.status) !== null && _a !== void 0 ? _a : 400, error.message);
+    }
 });
-exports.sendOTP = sendOTP;

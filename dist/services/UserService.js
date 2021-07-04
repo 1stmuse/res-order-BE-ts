@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const errorCreator_1 = require("../helpers/errorCreator");
 class UserServices {
@@ -27,6 +28,17 @@ class UserServices {
             if (!newUser)
                 throw errorCreator_1.createError(500, "server error");
             return newUser;
+        });
+    }
+    static auth(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield userModel_1.default.findOne({ email: data.email });
+            if (!user)
+                throw errorCreator_1.createError(400, "email or password incorrect");
+            const password = bcrypt_1.default.compareSync(data.password, user.password);
+            if (!password)
+                throw errorCreator_1.createError(400, "email or password incorrect");
+            return user;
         });
     }
     static getOne(id) {

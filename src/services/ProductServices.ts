@@ -17,7 +17,7 @@ export default class ProductServices {
         if(!isValidObjectId(id)) throw createError(400, "invalid product ID")
         let product;
         product = await Product.findById(id).populate("category", "name")
-        if(!product) throw createError(500, "could not create product")
+        if(!product) throw createError(404, "could not get product")
 
         return product
     }
@@ -25,7 +25,7 @@ export default class ProductServices {
     static async getAll () {
         let products;
         products = await Product.find().populate("category", "name")
-        if(!products) throw createError(500, "could not get product")
+        if(!products) throw createError(404, "could not get product")
 
         return products
     }

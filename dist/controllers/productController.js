@@ -32,7 +32,7 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         utils_1.handleResponse(res, 200, "success", response);
     }
     catch (error) {
-        utils_1.handleResponse(res, error.error, error.message);
+        utils_1.handleResponse(res, error.status, error.message);
     }
 });
 exports.createProduct = createProduct;
@@ -53,7 +53,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         utils_1.handleResponse(res, 200, "success", response);
     }
     catch (error) {
-        utils_1.handleResponse(res, error.error, error.message);
+        utils_1.handleResponse(res, error.status, error.message);
     }
 });
 exports.getProduct = getProduct;
@@ -64,7 +64,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         utils_1.handleResponse(res, 200, "success", response);
     }
     catch (error) {
-        utils_1.handleResponse(res, error.error, error.message);
+        utils_1.handleResponse(res, error.status, error.message);
     }
 });
 exports.getProducts = getProducts;
