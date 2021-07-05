@@ -12,12 +12,13 @@ export interface UserType  {
     email: string,
     phone_number: string,
     reset_otp?: string,
-    opt_expires? : number
+    otp_expires? : number
 }
 
 export interface UModel extends UserType, Document{
     generateToken: (token:string, cb:(data:string) =>void) => void,
-    createOtp: (opt: string) => void
+    createOtp: (opt: string) => void,
+    resetPassword: (pass: string) => void
 }
 
 export const UserSchema: Schema<UModel> = new Schema({
@@ -26,7 +27,7 @@ export const UserSchema: Schema<UModel> = new Schema({
     email: { type: String, required: true, unique: true },
     phone_number: {type: String, required: true },
     reset_otp: {type: String, default: ""}, 
-    otp_expires: {type: Date}
+    otp_expires: {type: Number, default: 0}
 }, {timestamps:true})
 
 UserSchema.pre<UModel>('save', function(this:UModel, next: any){
@@ -57,9 +58,15 @@ UserSchema.methods.generateToken = function(userId, cb){
 UserSchema.methods.createOtp = function(otp){
     var user = this
     const today = new Date()
-    const future = new Date(today.getMinutes() + 1)
+    const future = today.getMinutes() + 1
     user.reset_otp = otp
-    user.opt_expires = future.getMinutes()
+    user.otp_expires = future
+    user.save()
+}
+
+UserSchema.methods.resetPassword = function(pass){
+    var user  = this
+    user.password = pass
     user.save()
 }
 

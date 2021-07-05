@@ -15,7 +15,7 @@ export const createUser = async (req:Request, res:Response)=>{
     
         return handleResponse(res, 200, 'user  created successfully')
     } catch (error) {
-        return handleResponse(res, error.status ?? 500 , error.message)
+        return handleResponse(res, error?.status ?? 500 , error.message)
     }
 
 }
@@ -38,7 +38,7 @@ export const login = async(req:Request, res:Response) => {
 
         
     } catch (error) {
-        return handleResponse(res, error.status, error.message)
+        return handleResponse(res, error?.status ?? 500, error.message)
     }
 }
 
@@ -55,11 +55,11 @@ export const getUser = async (req:Request, res:Response) =>{
 
         return handleResponse(res, 200, 'success', response)
     } catch (error) {
-        return handleResponse(res, error.status, error.message)
+        return handleResponse(res, error?.status ?? 500, error.message)
     }
 }
 
-export const resetPassword = async (req:Request, res:Response) =>{
+export const resetPasswordOtp = async (req:Request, res:Response) =>{
     const phone = req.body.phone
     const id: string = res.locals.userId
     try {
@@ -68,14 +68,13 @@ export const resetPassword = async (req:Request, res:Response) =>{
         if(user.phone_number !== phone) throw createError(400, "phone number does not match user number")
         const opt = Math.floor(10000 + Math.random() * 90000)
         sendOTP(`+234${user.phone_number}`, opt).then((message)=>{
-            console.log(message.sid)
             user.createOtp(`${opt}`)
             return handleResponse(res, 200, "success")
         }).catch((err) => {
             if(err) return handleResponse(res, 400, err.message)
         })
     } catch (error) {
-        return handleResponse(res, 500, error.message)
+        return handleResponse(res, error?.status ?? 500, error.message)
     }
 
 }
@@ -84,12 +83,29 @@ export const verifyOtp = async (req:Request, res:Response) =>{
     const otp = req.body.otp
     const id: string = res.locals.userId
     try {
-        console.log(id)
         const user: UModel = await UserServices.getOne(id)
-        if(user.reset_otp === otp) return handleResponse(res, 200, "success move on")
-        return handleResponse(res, 400, "invalid otp")
+        if(user.reset_otp !== otp) return handleResponse(res, 400, "wrong otp provided")
+        
+        const now = new Date().getMinutes()
+        if(user.otp_expires! < now) return handleResponse(res, 400, "opt exxpired")
+        return handleResponse(res, 200, "success")
+
     } catch (error) {
-        return handleResponse(res, 500, error.message)
+        return handleResponse(res, error?.status ?? 500, error.message)
     }
 
+}
+
+export const resetPassword = async (req:Request, res:Response) => {
+    const newPassword = req.body.password
+    const id: string = res.locals.userId
+    try {
+        const user: UModel = await UserServices.getOne(id)
+        user.resetPassword(newPassword)
+        
+        return handleResponse(res, 200, "success")
+
+    } catch (error) {
+        return handleResponse(res, error?.status ?? 500, error.message)
+    }
 }

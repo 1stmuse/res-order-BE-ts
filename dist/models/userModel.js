@@ -34,6 +34,7 @@ exports.UserSchema = new mongoose_1.Schema({
     email: { type: String, required: true, unique: true },
     phone_number: { type: String, required: true },
     reset_otp: { type: String, default: "" },
+    otp_expires: { type: Number, default: 0 }
 }, { timestamps: true });
 exports.UserSchema.pre('save', function (next) {
     var user = this;
@@ -62,7 +63,15 @@ exports.UserSchema.methods.generateToken = function (userId, cb) {
 };
 exports.UserSchema.methods.createOtp = function (otp) {
     var user = this;
+    const today = new Date();
+    const future = today.getMinutes() + 1;
     user.reset_otp = otp;
+    user.otp_expires = future;
+    user.save();
+};
+exports.UserSchema.methods.resetPassword = function (pass) {
+    var user = this;
+    user.password = pass;
     user.save();
 };
 exports.default = mongoose_1.default.model('user', exports.UserSchema);

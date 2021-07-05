@@ -27,6 +27,6 @@ console.log(process.env.DB);
 dbInit_1.default();
 routes_1.default(exports.app);
 // removeUser()
-exports.app.listen(8080, () => {
+exports.app.listen(8081, () => {
     console.log(`server running`);
 });

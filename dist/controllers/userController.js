@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyOtp = exports.resetPassword = exports.getUser = exports.login = exports.createUser = void 0;
+exports.resetPassword = exports.verifyOtp = exports.resetPasswordOtp = exports.getUser = exports.login = exports.createUser = void 0;
 const utils_1 = require("../helpers/utils");
 const errorCreator_1 = require("../helpers/errorCreator");
 const UserService_1 = __importDefault(require("../services/UserService"));
@@ -25,11 +25,12 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return utils_1.handleResponse(res, 200, 'user  created successfully');
     }
     catch (error) {
-        return utils_1.handleResponse(res, (_a = error.status) !== null && _a !== void 0 ? _a : 500, error.message);
+        return utils_1.handleResponse(res, (_a = error === null || error === void 0 ? void 0 : error.status) !== null && _a !== void 0 ? _a : 500, error.message);
     }
 });
 exports.createUser = createUser;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     const data = Object.assign({}, req.body);
     try {
         const user = yield UserService_1.default.auth(data);
@@ -45,11 +46,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     catch (error) {
-        return utils_1.handleResponse(res, error.status, error.message);
+        return utils_1.handleResponse(res, (_b = error === null || error === void 0 ? void 0 : error.status) !== null && _b !== void 0 ? _b : 500, error.message);
     }
 });
 exports.login = login;
 const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     try {
         const id = req.params.id;
         const user = yield UserService_1.default.getOne(id);
@@ -62,11 +64,12 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return utils_1.handleResponse(res, 200, 'success', response);
     }
     catch (error) {
-        return utils_1.handleResponse(res, error.status, error.message);
+        return utils_1.handleResponse(res, (_c = error === null || error === void 0 ? void 0 : error.status) !== null && _c !== void 0 ? _c : 500, error.message);
     }
 });
 exports.getUser = getUser;
-const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const resetPasswordOtp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
     const phone = req.body.phone;
     const id = res.locals.userId;
     try {
@@ -76,7 +79,6 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             throw errorCreator_1.createError(400, "phone number does not match user number");
         const opt = Math.floor(10000 + Math.random() * 90000);
         utils_1.sendOTP(`+234${user.phone_number}`, opt).then((message) => {
-            console.log(message.sid);
             user.createOtp(`${opt}`);
             return utils_1.handleResponse(res, 200, "success");
         }).catch((err) => {
@@ -85,22 +87,39 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
     catch (error) {
-        return utils_1.handleResponse(res, 500, error.message);
+        return utils_1.handleResponse(res, (_d = error === null || error === void 0 ? void 0 : error.status) !== null && _d !== void 0 ? _d : 500, error.message);
     }
 });
-exports.resetPassword = resetPassword;
+exports.resetPasswordOtp = resetPasswordOtp;
 const verifyOtp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
     const otp = req.body.otp;
     const id = res.locals.userId;
     try {
-        console.log(id);
         const user = yield UserService_1.default.getOne(id);
-        if (user.reset_otp === otp)
-            return utils_1.handleResponse(res, 200, "success move on");
-        return utils_1.handleResponse(res, 400, "invalid otp");
+        if (user.reset_otp !== otp)
+            return utils_1.handleResponse(res, 400, "wrong otp provided");
+        const now = new Date().getMinutes();
+        if (user.otp_expires < now)
+            return utils_1.handleResponse(res, 400, "opt exxpired");
+        return utils_1.handleResponse(res, 200, "success");
     }
     catch (error) {
-        return utils_1.handleResponse(res, 500, error.message);
+        return utils_1.handleResponse(res, (_e = error === null || error === void 0 ? void 0 : error.status) !== null && _e !== void 0 ? _e : 500, error.message);
     }
 });
 exports.verifyOtp = verifyOtp;
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
+    const newPassword = req.body.password;
+    const id = res.locals.userId;
+    try {
+        const user = yield UserService_1.default.getOne(id);
+        user.resetPassword(newPassword);
+        return utils_1.handleResponse(res, 200, "success");
+    }
+    catch (error) {
+        return utils_1.handleResponse(res, (_f = error === null || error === void 0 ? void 0 : error.status) !== null && _f !== void 0 ? _f : 500, error.message);
+    }
+});
+exports.resetPassword = resetPassword;
