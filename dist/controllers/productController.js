@@ -27,7 +27,7 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             category: product.category,
             price: product.available,
             available: product.available,
-            createdAt: product.createdAt
+            createdAt: product.createdAt,
         };
         utils_1.handleResponse(res, 200, "success", response);
     }
@@ -48,7 +48,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             category: product.category,
             price: product.available,
             available: product.available,
-            createdAt: product.createdAt
+            createdAt: product.createdAt,
         };
         utils_1.handleResponse(res, 200, "success", response);
     }
@@ -60,8 +60,8 @@ exports.getProduct = getProduct;
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield ProductServices_1.default.getAll();
-        const response = products;
-        utils_1.handleResponse(res, 200, "success", response);
+        // const response = products
+        utils_1.handleResponse(res, 200, "success", products);
     }
     catch (error) {
         utils_1.handleResponse(res, error.status, error.message);

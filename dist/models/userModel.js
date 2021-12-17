@@ -29,16 +29,16 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 exports.UserSchema = new mongoose_1.Schema({
-    fullname: { type: String, required: true, },
+    fullname: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone_number: { type: String, required: true },
     reset_otp: { type: String, default: "" },
-    otp_expires: { type: Number, default: 0 }
+    otp_expires: { type: Number, default: 0 },
 }, { timestamps: true });
-exports.UserSchema.pre('save', function (next) {
+exports.UserSchema.pre("save", function (next) {
     var user = this;
-    if (user.isModified('password')) {
+    if (user.isModified("password")) {
         bcrypt.genSalt(10, function (err, salt) {
             if (err)
                 return next(err);
@@ -72,6 +72,8 @@ exports.UserSchema.methods.createOtp = function (otp) {
 exports.UserSchema.methods.resetPassword = function (pass) {
     var user = this;
     user.password = pass;
+    user.otp_expires = 0;
+    user.reset_otp = "";
     user.save();
 };
-exports.default = mongoose_1.default.model('user', exports.UserSchema);
+exports.default = mongoose_1.default.model("user", exports.UserSchema);

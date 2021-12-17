@@ -22,7 +22,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const user = yield UserService_1.default.create(userData);
         user.toObject();
-        return utils_1.handleResponse(res, 200, 'user  created successfully');
+        return utils_1.handleResponse(res, 200, "user  created successfully");
     }
     catch (error) {
         return utils_1.handleResponse(res, (_a = error === null || error === void 0 ? void 0 : error.status) !== null && _a !== void 0 ? _a : 500, error.message);
@@ -34,7 +34,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = Object.assign({}, req.body);
     try {
         const user = yield UserService_1.default.auth(data);
-        user.generateToken(user._id, (data) => {
+        user.generateToken(user._id, (token) => {
             if (data == null)
                 throw errorCreator_1.createError(500, "something went wrong, try again");
             const response = {
@@ -42,7 +42,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 email: user.email,
                 phone: user.phone_number,
             };
-            return utils_1.handleResponse(res, 200, "success", response, data);
+            return utils_1.handleResponse(res, 200, "success", response, token);
         });
     }
     catch (error) {
@@ -61,7 +61,7 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             email: user.email,
             phone_number: user.phone_number,
         };
-        return utils_1.handleResponse(res, 200, 'success', response);
+        return utils_1.handleResponse(res, 200, "success", response);
     }
     catch (error) {
         return utils_1.handleResponse(res, (_c = error === null || error === void 0 ? void 0 : error.status) !== null && _c !== void 0 ? _c : 500, error.message);
@@ -78,10 +78,12 @@ const resetPasswordOtp = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (user.phone_number !== phone)
             throw errorCreator_1.createError(400, "phone number does not match user number");
         const opt = Math.floor(10000 + Math.random() * 90000);
-        utils_1.sendOTP(`+234${user.phone_number}`, opt).then((message) => {
+        utils_1.sendOTP(`+234${user.phone_number}`, opt)
+            .then((message) => {
             user.createOtp(`${opt}`);
             return utils_1.handleResponse(res, 200, "success");
-        }).catch((err) => {
+        })
+            .catch((err) => {
             if (err)
                 return utils_1.handleResponse(res, 400, err.message);
         });

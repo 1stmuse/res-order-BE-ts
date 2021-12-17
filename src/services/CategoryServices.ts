@@ -21,4 +21,11 @@ export default class CategoryServices {
         if(!cat) throw createError(404, "category not found")
         return cat
     }
+
+    static async getAll () {
+        let cat = await Category.find()
+
+        if(!cat) throw createError(400, "could not get categories")
+        return cat
+    }
 }

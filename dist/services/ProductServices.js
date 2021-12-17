@@ -40,7 +40,7 @@ class ProductServices {
     static getAll() {
         return __awaiter(this, void 0, void 0, function* () {
             let products;
-            products = yield productModel_1.default.find().populate("category", "name");
+            products = yield productModel_1.default.find();
             if (!products)
                 throw errorCreator_1.createError(404, "could not get product");
             return products;

@@ -40,5 +40,13 @@ class CategoryServices {
             return cat;
         });
     }
+    static getAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let cat = yield categoryModel_1.default.find();
+            if (!cat)
+                throw errorCreator_1.createError(400, "could not get categories");
+            return cat;
+        });
+    }
 }
 exports.default = CategoryServices;
