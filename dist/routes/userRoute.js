@@ -7,7 +7,7 @@ const express_1 = require("express");
 const userController_1 = require("../controllers/userController");
 const auth_middleware_1 = __importDefault(require("../middlewares/auth_middleware"));
 const router = express_1.Router();
-router.get('/:id', userController_1.getUser);
+router.get("/", auth_middleware_1.default, userController_1.getUser);
 router.post('/auth', userController_1.login);
 router.post('/verifyOtp', auth_middleware_1.default, userController_1.verifyOtp);
 router.post("/resetPasswordOtp", auth_middleware_1.default, userController_1.resetPasswordOtp);

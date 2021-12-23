@@ -27,13 +27,8 @@ export const login = async (req: Request, res: Response) => {
     user.generateToken(user._id, (token) => {
       if (data == null)
         throw createError(500, "something went wrong, try again");
-      const response = {
-        name: user.fullname,
-        email: user.email,
-        phone: user.phone_number,
-      };
 
-      return handleResponse(res, 200, "success", response, token);
+      return handleResponse(res, 200, "success", null, token);
     });
   } catch (error) {
     return handleResponse(res, error?.status ?? 500, error.message);
@@ -42,8 +37,9 @@ export const login = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
+    const id = res.locals?.userId;
     const user: UModel = await UserServices.getOne(id);
+
     const response = {
       id: user._id,
       fullname: user.fullname,
