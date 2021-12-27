@@ -3,7 +3,11 @@ import AddressService from "../services/AddressServices";
 import { handleResponse } from "../helpers/utils";
 
 export const addAddress = async (req: Request, res: Response) => {
-  const data = { ...req.body };
+  const id = res.locals?.userId;
+  const data = {
+    name: req.body.name,
+    userId: id,
+  };
 
   try {
     await AddressService.addAddress(data);

@@ -18,9 +18,9 @@ class AddressServices {
     static addAddress(data) {
         return __awaiter(this, void 0, void 0, function* () {
             let address;
-            const itExist = yield addressModel_1.default.find({ name: data === null || data === void 0 ? void 0 : data.name });
+            const itExist = yield addressModel_1.default.findOne({ name: data === null || data === void 0 ? void 0 : data.name });
             if (itExist)
-                throw errorCreator_1.createError(404, "addres already Exist");
+                throw errorCreator_1.createError(404, "address already Exist");
             address = new addressModel_1.default(data);
             address = yield address.save();
             if (!address)

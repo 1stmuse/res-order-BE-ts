@@ -16,7 +16,12 @@ exports.getUserAddress = exports.addAddress = void 0;
 const AddressServices_1 = __importDefault(require("../services/AddressServices"));
 const utils_1 = require("../helpers/utils");
 const addAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = Object.assign({}, req.body);
+    var _a;
+    const id = (_a = res.locals) === null || _a === void 0 ? void 0 : _a.userId;
+    const data = {
+        name: req.body.name,
+        userId: id,
+    };
     try {
         yield AddressServices_1.default.addAddress(data);
         utils_1.handleResponse(res, 200, "added succesfuly");
@@ -27,9 +32,9 @@ const addAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.addAddress = addAddress;
 const getUserAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _b;
     try {
-        const id = (_a = res.locals) === null || _a === void 0 ? void 0 : _a.userId;
+        const id = (_b = res.locals) === null || _b === void 0 ? void 0 : _b.userId;
         const data = yield AddressServices_1.default.getAddress(id);
         utils_1.handleResponse(res, 200, "success", data);
     }
